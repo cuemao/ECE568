@@ -29,36 +29,49 @@ def id_class_name(class_id, classes):
 # Loading model
 model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
                                       'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
-#image = cv2.imread("image.jpeg")
-image = cv2.imread("car7.png")
 
+image_name = "36"
+image = cv2.imread("images/"+image_name+".jpg")
 image_height, image_width, _ = image.shape
 
 model.setInput(cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True))
 output = model.forward()
 #print(output[0,0,:,:].shape)
 
+num_spots = 3
+y_threshold = 0.65*image_height
+spot_width = image_width/num_spots
+is_vacant = [True]*num_spots
 
 for detection in output[0, 0, :, :]:
-    #print(detection)
-    confidence = detection[2]
-    if confidence > .5:
-        class_id = detection[1]
-        class_name=id_class_name(class_id,classNames)
-        print(str(str(class_id) + " " + str(detection[2])  + " " + class_name))
-        box_x = detection[3] * image_width
-        box_y = detection[4] * image_height
-        box_width = detection[5] * image_width
-        box_height = detection[6] * image_height
-        cv2.rectangle(image, (int(box_x), int(box_y)), (int(box_width), int(box_height)), (23, 230, 210), thickness=1)
-        cv2.putText(image,class_name ,(int(box_x), int(box_y+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.005*image_width),(0, 0, 255))
+    class_id, confidence, x1, y1, x2, y2 = detection[1:]
+    
+    if confidence > .4:
+        if class_id == 3: #is car
+            class_name=id_class_name(class_id,classNames)
+            #print(str(str(class_id) + " " + str(confidence)  + " " + class_name))
+            
+            box_x1 = x1*image_width
+            box_y1 = y1*image_height
+            box_x2 = x2*image_width
+            box_y2 = y2*image_height
+            
+            if (box_y2 > y_threshold): #is in parking space
+                box_center = (box_x1 + box_x2)/2
+                spot_idx = int(box_center/spot_width)
+                cv2.circle(image, (int(box_center), int(box_y2)), 40, (23, 230, 210), -1)
+                is_vacant[spot_idx] = False
+                
+            cv2.line(image, (0, int(y_threshold)), (image_width-1, int(y_threshold)), (0, 0, 255), 20)
+            cv2.rectangle(image, (int(box_x1), int(box_y1)), (int(box_x2), int(box_y2)), (23, 230, 210), thickness=5)
+            #cv2.putText(image,class_name,(int(box_x1), int(box_y1+.05*image_height)),cv2.FONT_HERSHEY_SIMPLEX,(.002*image_width),(0, 0, 255), 5)
 
+print("image" + image_name + " is_vacant:")
+print(is_vacant)
 
-
-
-#img2 = cv2.resize(image, (400,360))
+#image = cv2.resize(image, (400,360))
 #cv2.imshow('image', image)
-cv2.imwrite("result.jpg",image)
+cv2.imwrite(image_name+"_result.jpg",image)
 
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
