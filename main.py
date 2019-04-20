@@ -31,10 +31,10 @@ model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
                                       'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
 
 num_spots = 3
-image_list = ["31", "32", "33", "34", "35", "36"]
+image_list = ["41.jpg"]
 
 for image_name in image_list:
-    image = cv2.imread("images/"+image_name+".jpg")
+    image = cv2.imread("images/"+image_name)
     image_height, image_width, _ = image.shape
 
     model.setInput(cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True))
@@ -74,7 +74,7 @@ for image_name in image_list:
 
     #image = cv2.resize(image, (400,360))
     #cv2.imshow('image', image)
-    cv2.imwrite(image_name+"_result.jpg",image)
+    cv2.imwrite("result_" + image_name, image)
 
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
