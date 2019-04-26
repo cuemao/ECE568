@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+    <head>
+        <title>Parking Spots Monitor</title>
+    </head>
+
+    <body>
+        <h1>Parking Spots Monitor</h1>
+        <input type="button" onclick="self.location.href='http://0.0.0.0:8080/exec'"  value="Check Vacancy">
+        <h2>{{ status }}</h2>
+        {% if image != "" %}
+        <img src="/static/{{ image }}" alt="{{ status }}" width="640px;">
+        {% endif %}
+    </body>
+
+</html>
+

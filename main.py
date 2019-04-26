@@ -25,16 +25,17 @@ def id_class_name(class_id, classes):
         if class_id == key:
             return value
 
+rootpath = '/home/pi/ECE568/'
 
 # Loading model
-model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
-                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
+model = cv2.dnn.readNetFromTensorflow(rootpath + 'models/frozen_inference_graph.pb',
+                                      rootpath + 'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
 
 num_spots = 3
-image_list = ["41.jpg"]
+image_list = ["31.jpg"]
 
 for image_name in image_list:
-    image = cv2.imread("images/"+image_name)
+    image = cv2.imread(rootpath + "images/"+image_name)
     image_height, image_width, _ = image.shape
 
     model.setInput(cv2.dnn.blobFromImage(image, size=(300, 300), swapRB=True))
@@ -74,7 +75,7 @@ for image_name in image_list:
 
     #image = cv2.resize(image, (400,360))
     #cv2.imshow('image', image)
-    cv2.imwrite("result_" + image_name, image)
+    cv2.imwrite(rootpath + "result_" + image_name, image)
 
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
