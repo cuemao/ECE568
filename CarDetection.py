@@ -2,7 +2,7 @@ import cv2
 
 rootpath = '/home/pi/ECE568/'
 num_spots = 3
-threshold = 0.65
+threshold = 0.675
 dot_thickness = 40
 line_thickness = 20
 box_thickness = 5

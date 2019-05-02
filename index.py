@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from flask import Flask, render_template, redirect
 import requests
 import subprocess
@@ -5,16 +7,16 @@ app = Flask(__name__)
 
 from CarDetection import *
 
-image_name = "31.jpg"
-map_name = "result_31.jpg" #TODO change to map 
-slaves_url = ["http://0.0.0.0:8090/", "http://0.0.0.0:8091/"]
-slaves_map = ["result_31.jpg", "result_32.jpg"] #TODO change to map
+
+map_name = "map_1.png"  # init map
+slaves_url = ["http://192.168.137.46:8090/", "http://192.168.137.46:8091/", "http://192.168.137.46:8092/"]
+slaves_map = ["map_1.png", "map_2.png", "map_3.png"]
 
 @app.route("/")
 def home():
     templateData = {
             "status": "",
-            "image": ""
+            "image": "map.png"
             }
 
     return render_template('index.html', **templateData)
@@ -22,29 +24,31 @@ def home():
 
 @app.route("/exec/")
 def exec():
-    #subprocess.call(['/usr/bin/python3 main.py'], shell=True)
-    #status = "vacant" if detect(image_name) else "occupied"
+    map_name = "map_1.png"
     
-    #TODO subprocess capture image
-
     all_occupied = True
-    nearest = 0
+    nearest = 1
 
-    if detect(image_name):
-        all_occupied = False
-    else:
-        #get result from slaves
-        for i, url in enumerate(slaves_url):
+    
+    status = ""
+    image = ""
+    #get result from slaves
+    for i, url in enumerate(slaves_url):
+        try:
             r = requests.get(url)
+            r.raise_for_status()
             if r.json()['isVacant']:
                 nearest = i+1
                 all_occupied = False
                 map_name = slaves_map[i]
                 break
+        except requests.exceptions.HTTPError as err:
+            print("Failed to get"+url)
+            continue
 
     if all_occupied:
         status = "No spots available!"
-        image = ""
+        image = "map.png"
     else:
         status = "Nearest: " + str(nearest)
         image = map_name
@@ -55,7 +59,6 @@ def exec():
             "image": image
             }
     return render_template('index.html', **templateData)
-    #return redirect("/")
     
 
 if __name__ == "__main__":

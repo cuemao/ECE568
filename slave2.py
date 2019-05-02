@@ -3,7 +3,7 @@ import subprocess
 app = Flask(__name__)
 from CarDetection import *
 
-image_name = "32.jpg"
+image_name = "cam_s2.jpg"
 
 @app.route("/")
 def exec():

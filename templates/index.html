@@ -4,9 +4,10 @@
     </head>
 
     <body>
-        <h1>Parking Spots Monitor</h1>
-        <input type="button" onclick="self.location.href='http://0.0.0.0:8080/exec'"  value="Check Vacancy">
-        <h2>{{ status }}</h2>
+        <h1><font face="Arial">Parking Spots Monitor</font></h1>
+        <input type="button" onclick="self.location.href='http://192.168.137.1:8080/exec'"  value="Check Vacancy">
+        <input type="button" onclick="self.location.href='http://192.168.137.1:8080/'" value="Return">
+        <h2><font face="Arial">{{ status }}</font></h2>
         {% if image != "" %}
         <img src="/static/{{ image }}" alt="{{ status }}" width="640px;">
         {% endif %}

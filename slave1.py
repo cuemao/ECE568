@@ -3,11 +3,12 @@ import subprocess
 app = Flask(__name__)
 from CarDetection import *
 
-image_name = "31.jpg"
+image_name = "cam_s1.jpg"
 
 @app.route("/")
 def exec():
     # subprocess capture image if we have multiple pi & cameras
+    subprocess.call(['raspistill -o images/cam_s1.jpg -n -t 10 --colfx 128:128'], shell=True)
     isVacant = detect(image_name)
     return jsonify(isVacant=isVacant)
 
